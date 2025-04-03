@@ -20,7 +20,7 @@ A very simple and small plugin to cycle through a list of installed colorschemes
 Install the plugin using whatever plugin manager.
 
 > [!caution]
-> Make sure the listed plugins are already installed.
+> Make sure the listed colourschemes are already installed.
 
 Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
