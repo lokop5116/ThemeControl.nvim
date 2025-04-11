@@ -1,52 +1,36 @@
 -- main module
 local M = {}
 
--- list of all default colorschemes, in case list of colorschemes is not provided it cycles through these
-local defaultColors = {
-	"blue",
-	"darkblue",
-	"delek",
-	"desert",
-	"elflord",
-	"evening",
-	"habamax",
-	"industry",
-	"koehler",
-	"morning",
-	"murphy",
-	"pablo",
-	"peachpuff",
-	"ron",
-	"shine",
-	"slate", -- set as default when no default given
-	"torte",
-	"zellner",
-}
+-- list of all colorschemes, in case list of colorschemes is not provided it cycles through these
+local defaultColors = {}
+
+-- Extract the colorscheme name from the file path
+for _, file in ipairs(vim.fn.globpath(vim.o.runtimepath, "colors/*.vim", true, true)) do
+	local name = vim.fn.fnamemodify(file, ":t:r")
+	table.insert(defaultColors, name)
+end
 
 function M.setup(opts)
 	opts = opts or {}
 
-	local curTheme = 0 --keep track of current theme
-
 	-- default colorscheme
-	-- user provided variable must be the index of default scheme in colorschemes
-	local default = opts.default or 7
-
 	local colorschemes = opts.colorschemes or defaultColors
 
-	-- if a user provided list is found
-	-- sets curTheme as 1 otherwise sets it at position of "slate" in defaultColors
-	if colorschemes == defaultColors then
-		curTheme = 7
-	else
-		-- if user does not specify default index, goes to 1
-		curTheme = default or 1
+	-- keep track of current theme
+	local curTheme = (opts.default and opts.default <= #colorschemes) and opts.default or 1
+
+	-- user provided variable must be the index of default scheme in colorschemes
+	local default = (opts.default and opts.default <= #colorschemes) and opts.default or 1
+
+	-- function to set colorscheme
+	local function set_colorscheme(index)
+		vim.cmd(":colorscheme " .. colorschemes[index])
 	end
 
 	-- creates command to cycle forward
 	vim.api.nvim_create_user_command("CycleThemeForward", function()
 		curTheme = curTheme % #colorschemes + 1
-		vim.cmd(":colorscheme " .. colorschemes[curTheme])
+		set_colorscheme(curTheme)
 	end, {})
 
 	-- creates command to cycle backward
@@ -55,13 +39,13 @@ function M.setup(opts)
 		if curTheme == 0 then
 			curTheme = #colorschemes
 		end
-		vim.cmd(":colorscheme " .. colorschemes[curTheme])
+		set_colorscheme(curTheme)
 	end, {})
 
 	-- resets colorscheme to designated default scheme
 	vim.api.nvim_create_user_command("ResetTheme", function()
-			curTheme = default
-		vim.cmd(":colorscheme " .. colorschemes[curTheme])
+		curTheme = default
+		set_colorscheme(curTheme)
 	end, {})
 
 	-- sets background as transparent
