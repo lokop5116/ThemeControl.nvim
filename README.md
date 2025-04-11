@@ -48,15 +48,17 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 <!-- config:start -->
 
 ```lua
-default = 7,
+default = 1,
 defaultColors = {
+-- extracts all colorschemes from your runtime path
+-- all installed colorschemes + default ones
 "blue",
 "darkblue",
 "delek",
 "desert",
 "elflord",
 "evening",
-"habamax", -- set as default colorscheme
+"habamax",
 "industry",
 "koehler",
 "morning",
